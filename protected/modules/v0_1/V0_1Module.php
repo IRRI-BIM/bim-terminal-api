@@ -1,6 +1,6 @@
 <?php
 
-class ApiModule extends CWebModule
+class V0_1Module extends CWebModule
 {
 	public function init()
 	{
@@ -9,8 +9,8 @@ class ApiModule extends CWebModule
 
 		// import the module-level models and components
 		$this->setImport(array(
-			'api.models.*',
-			'api.components.*',
+			'v0_1.models.*',
+			'v0_1.components.*',
 		));
 	}
 
