@@ -164,7 +164,7 @@ EOD;
         
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
-        $criteria->compare('UPPER(study_name)',strtolower(trim($study_name)));
+        $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
         $criteria->compare('status','OPEN');
         
         $transaction = Transaction::model()->findAll($criteria);
@@ -173,7 +173,7 @@ EOD;
             
             $response['type'] = 'Warning';
             $response['timestamp'] = date("Y-m-d H:i");
-            $response['response'] = 'An open transaction for '.$transaction->study_name.' already exists. Send a PUT request instead to update the resource.';
+            $response['response'] = 'An open transaction for '.$study_name.' already exists. Send a PUT request instead to update the resource.';
         }
         else{
             $databaseTransaction = Yii::app()->db->beginTransaction();
@@ -206,9 +206,10 @@ EOD;
                 
                 $databaseTransaction->rollback();
             }
-            
-            return $response;
+         
         }
+        
+        return $response;
     }
 
 }
