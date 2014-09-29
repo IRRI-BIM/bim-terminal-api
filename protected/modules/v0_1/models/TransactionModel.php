@@ -211,5 +211,56 @@ EOD;
         
         return $response;
     }
+    
+    public static function delete($data = NULL){
+        
+        extract($data);
+        $response = array();
+        
+        //Check if there is an open transaction for the study
+        $criteria = new CDbCriteria();
+        $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+        $criteria->compare('status','OPEN');
+        
+        $transaction = Transaction::model()->findAll($criteria);
+        
+        if(count($transaction) <= 0){
+            
+            $response['type'] = 'Error';
+            $response['timestamp'] = date("Y-m-d H:i");
+            $response['response'] = 'There is no open transaction for '.$study_name.'.';
+        }
+        
+        else{
+            $databaseTransaction = Yii::app()->db->beginTransaction();
+            
+            try{
+                $criteria = new CDbCriteria();
+                $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+                $criteria->compare('status','OPEN');
+
+                $transaction = Transaction::model()->find($criteria);
+                
+                $transaction->delete();
+                
+                $response['type'] = 'Success';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = 'The open transaction for '.$study_name.' has been successfully deleted.';
+                
+                $databaseTransaction->commit();
+            } 
+            catch (Exception $ex) {
+                
+                $response['type'] = 'Error';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = 'There was an error deleting the transaction.';
+                $response['error_details'] = $ex->getMessage();
+                
+                $databaseTransaction->rollback();
+            }
+        }
+        
+        return $response;
+    }
 
 }
