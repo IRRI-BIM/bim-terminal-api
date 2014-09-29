@@ -30,6 +30,7 @@ class TransactionController extends ApiController {
             $response['response'] = $result;
 
             $this->_sendResponse(200, CJSON::encode($response), 'text/json');
+            
         } else if ($request == 'POST') {
 
             $data = array();
@@ -43,14 +44,25 @@ class TransactionController extends ApiController {
             }
 
             if (!empty($_POST['study_name'])) {
+                $data['study_name'] = $_POST['study_name'];
+            }
+            else{
                 array_push($error_array, "Required field (study_name) is missing.");
             }
-
+            
             // Check optional parameters
             if (!empty($_POST['remarks'])) {
                 $data['remarks'] = trim($_POST['remarks']);
             }
-
+            
+            if(count($error_array) > 0){
+                $response['type'] = 'Error';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = $error_array;
+            }
+            else{
+                $response = TransactionModel::create($data);
+            }
             
             $this->_sendResponse(200, CJSON::encode($response), 'text/json');
         }

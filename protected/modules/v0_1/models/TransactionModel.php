@@ -6,14 +6,14 @@
  * @author Jack Elendil B. Lagare <j.lagare@irri.org>
  */
 class TransactionModel {
-    
-    public static function filter($conditionArray,$conditionString){
-        
+
+    public static function filter($conditionArray, $conditionString) {
+
         $conditionArray[] = '(' . $conditionString . ')';
-        
+
         return $conditionArray;
     }
-    
+
     public static function get($data = NULL) {
 
         $condition = '';
@@ -137,32 +137,78 @@ EOD;
         foreach ($results as $key) {
             if (is_null($key['modifier'])) {
                 $key["modifier"] = null;
-            } 
-            
+            }
+
             array_push($rows, $key);
         }
-        
-        if(count($rows) < 1){
+
+        if (count($rows) < 1) {
             $response = 'No records found.';
-        }
-        else{
+        } else {
             $response = array(
                 "totalRows" => intval($count[0]["count"]),
                 "limit" => intval($limit),
                 "offset" => intval($offset),
                 "rows" => $rows,
-                //"columns" => $columns,
+                    //"columns" => $columns,
             );
         }
-        
+
         return $response;
     }
-    
-    public static function create($data = NULL){
-        
+
+    public static function create($data = NULL) {
+
         extract($data);
+        $response = array();
         
         //Check if there is an open transaction for the study
+        $criteria = new CDbCriteria();
+        $criteria->compare('UPPER(study_name)',strtolower(trim($study_name)));
+        $criteria->compare('status','OPEN');
         
+        $transaction = Transaction::model()->findAll($criteria);
+        
+        if(count($transaction) > 0){
+            
+            $response['type'] = 'Warning';
+            $response['timestamp'] = date("Y-m-d H:i");
+            $response['response'] = 'An open transaction for '.$transaction->study_name.' already exists. Send a PUT request instead to update the resource.';
+        }
+        else{
+            $databaseTransaction = Yii::app()->db->beginTransaction();
+            try{
+                $transaction = new Transaction();
+            
+                $transaction->status = 'OPEN';
+                $transaction->start_action_timestamp = new CDbExpression('NOW()');
+                $transaction->creator = strtoupper(trim($user));
+
+                if(isset($remarks)){
+                    $transaction->remarks = $remarks;
+                }
+
+                $transaction->study_name = $study_name;
+                $transaction->save();
+                $databaseTransaction->commit();
+                
+                
+                $response['type'] = 'Success';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = 'Transaction for '.$study_name.' was successfully created.';
+            } 
+            catch (Exception $ex) {
+                
+                $response['type'] = 'Error';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = 'There was an error creating the transaction.';
+                $response['error_details'] = $ex->getMessage();
+                
+                $databaseTransaction->rollback();
+            }
+            
+            return $response;
+        }
     }
+
 }
