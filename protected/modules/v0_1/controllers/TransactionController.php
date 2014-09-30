@@ -133,7 +133,14 @@ class TransactionController extends ApiController {
             
             // Check optional parameters
             if(!empty($put_vars['status'])){
-                $data['status'] = $put_vars['status'];
+                
+                if(strtoupper($put_vars['status']) == 'OPEN' || strtoupper($put_vars['status']) == 'COMMITTED'){
+                    $data['status'] = strtoupper($put_vars['status']);
+                }
+                else{
+                    array_push($error_array,"The value for (status) can only be OPEN or COMMITTED.");
+                }
+                
             }
             
             if(!empty($put_vars['remarks'])){
@@ -141,11 +148,22 @@ class TransactionController extends ApiController {
             }
             
             if(!empty($put_vars['record_count'])){
-                $data['record_count'] = $put_vars['remarks'];
+                
+                if(is_numeric($put_vars['record_count'])){
+                    $data['record_count'] = $put_vars['record_count'];
+                }
+                else{
+                    array_push($error_array,"The value for (record_count) must be an integer.");
+                }
             }
             
             if(!empty($put_vars['invalid_record_count'])){
-                $data['invalid_record_count'] = $put_vars['invalid_record_count'];
+                if(is_numeric($put_vars['invalid_record_count'])){
+                    $data['invalid_record_count'] = $put_vars['invalid_record_count'];
+                }
+                else{
+                    array_push($error_array,"The value for (invalid_record_count) must be an integer.");
+                }
             }
             
             if(count($error_array) > 0){
