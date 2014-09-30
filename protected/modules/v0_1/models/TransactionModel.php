@@ -262,5 +262,76 @@ EOD;
         
         return $response;
     }
+    
+    public static function update($data = NULL){
+        
+        extract($data);
+        
+        $response = array();
+        
+        //Check if there is an open transaction for the study
+        $criteria = new CDbCriteria();
+        $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+        $criteria->compare('status','OPEN');
+        
+        $transaction = Transaction::model()->findAll($criteria);
+        
+        if(count($transaction) <= 0){
+            
+            $response['type'] = 'Error';
+            $response['timestamp'] = date("Y-m-d H:i");
+            $response['response'] = 'There is no open transaction for '.$study_name.'.';
+        }
+        
+        else{
+            $databaseTransaction = Yii::app()->db->beginTransaction();
+            
+            try{
+                $criteria = new CDbCriteria();
+                $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+                $criteria->compare('status','OPEN');
 
+                $transaction = Transaction::model()->find($criteria);
+                
+                if(!empty($status)){
+                    $transaction->status = $status;
+                }
+                
+                if(!empty($remarks)){
+                    $transaction->remarks = $remarks;
+                }
+                
+                if(!empty($record_count)){
+                    $transaction->record_count = $record_count;
+                }
+                
+                if(!empty($invalid_record_count)){
+                    $transaction->invalid_record_count = $invalid_record_count;
+                }
+                
+                $transaction->modifier = $user;
+                
+                $transaction->modification_timestamp = new CDbExpression('NOW()');
+                
+                $transaction->save();
+                
+                $response['type'] = 'Success';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = 'The open transaction for '.$study_name.' has been successfully updated.';
+                
+                $databaseTransaction->commit();
+            } 
+            catch (Exception $ex) {
+                
+                $response['type'] = 'Error';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = 'There was an error updating the transaction.';
+                $response['error_details'] = $ex->getMessage();
+                
+                $databaseTransaction->rollback();
+            }
+        }
+        
+        return $response;
+    }
 }
