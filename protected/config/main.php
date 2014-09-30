@@ -54,7 +54,7 @@ return array(
 			'connectionString' => 'pgsql:host=localhost;dbname=bim-terminal-api',
 			'emulatePrepare' => true,
 			'username' => 'postgres',
-			'password' => 'aelendil',
+			'password' => 'br33d1ngR1c3',
 			'charset' => 'utf8',
 		),
 		
