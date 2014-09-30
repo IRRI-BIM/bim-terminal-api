@@ -1,19 +1,33 @@
 <?php
-
 /**
  * Description of TransactionModel
  *
  * @author Jack Elendil B. Lagare <j.lagare@irri.org>
  */
 class TransactionModel {
-
+    
+    /**
+     * Appends SQL condition to an array of SQL conditions.
+     * 
+     * @param array $conditionArray String array containing the SQL condition
+     * @param type $conditionString String SQL condition to append to the condition array
+     * @return string array containing the modified condition array
+     */
     public static function filter($conditionArray, $conditionString) {
 
         $conditionArray[] = '(' . $conditionString . ')';
 
         return $conditionArray;
     }
-
+    
+    /**
+     * Handles the retrieval of data from the database and provide a response
+     * to the GET request.
+     * 
+     * @param type $data array containing the parameters of the request
+     * @return String array containing the formatted response.
+     * @author Jack Elendil B. Lagare
+     */
     public static function get($data = NULL) {
 
         $condition = '';
@@ -156,7 +170,15 @@ EOD;
 
         return $response;
     }
-
+    
+    /**
+     * Handles the creation of a new object and provide a response to the
+     * POST request.
+     * 
+     * @param type $data array containing the parameters of the request
+     * @return type String array containing the formatted response.
+     * @author Jack Elendil B. Lagare <j.lagare@irri.org>
+     */
     public static function create($data = NULL) {
 
         extract($data);
@@ -212,6 +234,14 @@ EOD;
         return $response;
     }
     
+    /**
+     * Handles the deletion of an object and provide a response to the
+     * DELETE request.
+     * 
+     * @param type $data array containing the parameters of the request
+     * @return type String array containing the formatted response.
+     * @author Jack Elendil B. Lagare <j.lagare@irri.org>
+    */
     public static function delete($data = NULL){
         
         extract($data);
@@ -263,6 +293,14 @@ EOD;
         return $response;
     }
     
+    /**
+     * Handles the updating of an object and provide a response to the
+     * PUT request.
+     * 
+     * @param type $data array containing the parameters of the request
+     * @return type String array containing the formatted response.
+     * @author Jack Elendil B. Lagare <j.lagare@irri.org>
+    */ 
     public static function update($data = NULL){
         
         extract($data);
