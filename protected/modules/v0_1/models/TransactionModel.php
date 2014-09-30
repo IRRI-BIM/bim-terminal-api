@@ -268,6 +268,7 @@ EOD;
         extract($data);
         
         $response = array();
+        $flag = 0;
         
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
@@ -295,31 +296,42 @@ EOD;
                 
                 if(!empty($status)){
                     $transaction->status = $status;
+                    $flag = 1;
                 }
                 
                 if(!empty($remarks)){
                     $transaction->remarks = $remarks;
+                    $flag = 1;
                 }
                 
                 if(!empty($record_count)){
                     $transaction->record_count = $record_count;
+                    $flag = 1;
                 }
                 
                 if(!empty($invalid_record_count)){
-                    $transaction->invalid_record_count = $invalid_record_count;
+                    $transaction->invalid_record_count = $invalid_record_count  ;
+                    $flag = 1;
                 }
                 
-                $transaction->modifier = $user;
-                
-                $transaction->modification_timestamp = new CDbExpression('NOW()');
-                
-                $transaction->save();
-                
-                $response['type'] = 'Success';
-                $response['timestamp'] = date("Y-m-d H:i");
-                $response['response'] = 'The open transaction for '.$study_name.' has been successfully updated.';
-                
-                $databaseTransaction->commit();
+                if($flag == 1){
+                    $transaction->modifier = $user;
+
+                    $transaction->modification_timestamp = new CDbExpression('NOW()');
+
+                    $transaction->save();
+
+                    $response['type'] = 'Success';
+                    $response['timestamp'] = date("Y-m-d H:i");
+                    $response['response'] = 'The open transaction for '.$study_name.' has been successfully updated.';
+
+                    $databaseTransaction->commit();
+                }
+                else{
+                    $response['type'] = 'Warning';
+                    $response['timestamp'] = date("Y-m-d H:i");
+                    $response['response'] = 'The request did not contain any attributes to update. The open transaction for '.$study_name.' was not updated.';
+                }
             } 
             catch (Exception $ex) {
                 
