@@ -104,6 +104,44 @@ class TransactionController extends ApiController {
             $this->_sendResponse(200, CJSON::encode($response), 'text/json');
             
         }
+        
+        else if($request == 'PUT'){
+            
+            $data = array();
+            $error_array = array();
+            $delete_vars = array();
+            
+            parse_str(file_get_contents('php://input'),$delete_vars);
+            
+            // Check required parameters
+            if (!empty($delete_vars['user'])) {
+                $data['user'] = trim($delete_vars['user']);
+            } 
+            else {
+                array_push($error_array, "Required field (user) is missing.");
+            }
+
+            if (!empty($delete_vars['study_name'])) {
+                $data['study_name'] = $delete_vars['study_name'];
+            }
+            else{
+                array_push($error_array, "Required field (study_name) is missing.");
+            }
+            
+            // Check optional parameters
+            
+            
+            if(count($error_array) > 0){
+                $response['type'] = 'Error';
+                $response['timestamp'] = date("Y-m-d H:i");
+                $response['response'] = $error_array;
+            }
+            else{
+                $response = TransactionModel::update($data);
+            }
+            
+            $this->_sendResponse(200, CJSON::encode($response), 'text/json');
+        }
     }
 
 }
