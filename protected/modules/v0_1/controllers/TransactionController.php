@@ -112,27 +112,41 @@ class TransactionController extends ApiController {
             
             $data = array();
             $error_array = array();
-            $delete_vars = array();
+            $put_vars = array();
             
-            parse_str(file_get_contents('php://input'),$delete_vars);
+            parse_str(file_get_contents('php://input'),$put_vars);
             
             // Check required parameters
-            if (!empty($delete_vars['user'])) {
-                $data['user'] = trim($delete_vars['user']);
+            if (!empty($put_vars['user'])) {
+                $data['user'] = trim($put_vars['user']);
             } 
             else {
                 array_push($error_array, "Required field (user) is missing.");
             }
 
-            if (!empty($delete_vars['study_name'])) {
-                $data['study_name'] = $delete_vars['study_name'];
+            if (!empty($put_vars['study_name'])) {
+                $data['study_name'] = $put_vars['study_name'];
             }
             else{
                 array_push($error_array, "Required field (study_name) is missing.");
             }
             
             // Check optional parameters
+            if(!empty($put_vars['status'])){
+                $data['status'] = $put_vars['status'];
+            }
             
+            if(!empty($put_vars['remarks'])){
+                $data['remarks'] = $put_vars['remarks'];
+            }
+            
+            if(!empty($put_vars['record_count'])){
+                $data['record_count'] = $put_vars['remarks'];
+            }
+            
+            if(!empty($put_vars['invalid_record_count'])){
+                $data['invalid_record_count'] = $put_vars['invalid_record_count'];
+            }
             
             if(count($error_array) > 0){
                 $response['type'] = 'Error';
