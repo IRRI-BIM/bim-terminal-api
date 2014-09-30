@@ -33,7 +33,7 @@ class TransactionModel {
             }
 
             if (!empty($strCond) and $strCond != ' ') {
-                $conditionArray = $this->filter($conditionArray, $strCond);
+                $conditionArray = TransactionModel::filter($conditionArray, $strCond);
             }
         }
 
