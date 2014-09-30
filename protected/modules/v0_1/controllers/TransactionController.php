@@ -13,7 +13,8 @@ class TransactionController extends ApiController {
         //determine request type of the call
         $request = Yii::app()->request->getRequestType();
         $response = array();
-
+        
+        //Handle GET requests
         if ($request == 'GET') {
 
             $data = array();
@@ -24,21 +25,25 @@ class TransactionController extends ApiController {
 
             //retrieve data from model class
             $result = TransactionModel::get($data);
-
+            
+            //prepare response
             $response['type'] = 'Success';
             $response['timestamp'] = date("Y-m-d H:i");
             $response['response'] = $result;
-
+            
+            //send response
             $this->_sendResponse(200, CJSON::encode($response), 'text/json');
             
         } 
         
+        //Handle POST requests
         else if ($request == 'POST') {
 
             $data = array();
             $error_array = array();
             $post_vars = array();
             
+            //parse request variables and store in $post_vars
             parse_str(file_get_contents('php://input'),$post_vars);
             
             // Check required parameters
@@ -60,6 +65,7 @@ class TransactionController extends ApiController {
                 $data['remarks'] = trim($post_vars['remarks']);
             }
             
+            //prepare response
             if(count($error_array) > 0){
                 $response['type'] = 'Error';
                 $response['timestamp'] = date("Y-m-d H:i");
@@ -69,15 +75,18 @@ class TransactionController extends ApiController {
                 $response = TransactionModel::create($data);
             }
             
+            //send response
             $this->_sendResponse(200, CJSON::encode($response), 'text/json');
         }
         
+        //Handle DELETE requests
         else if($request == 'DELETE'){
             
             $data = array();
             $error_array = array();
             $delete_vars = array();
             
+            //parse request variables and store in $delete_vars
             parse_str(file_get_contents('php://input'),$delete_vars);
             
             // Check required parameters
@@ -95,6 +104,7 @@ class TransactionController extends ApiController {
                 array_push($error_array, "Required field (study_name) is missing.");
             }
             
+            //prepare response
             if(count($error_array) > 0){
                 $response['type'] = 'Error';
                 $response['timestamp'] = date("Y-m-d H:i");
@@ -104,16 +114,19 @@ class TransactionController extends ApiController {
                 $response = TransactionModel::delete($data);
             }
             
+            //send response
             $this->_sendResponse(200, CJSON::encode($response), 'text/json');
             
         }
         
+        //Handle PUT requests
         else if($request == 'PUT'){
             
             $data = array();
             $error_array = array();
             $put_vars = array();
             
+            //parse request variables and store in $put_vars
             parse_str(file_get_contents('php://input'),$put_vars);
             
             // Check required parameters
@@ -149,6 +162,7 @@ class TransactionController extends ApiController {
             
             if(!empty($put_vars['record_count'])){
                 
+                //validate
                 if(is_numeric($put_vars['record_count'])){
                     $data['record_count'] = $put_vars['record_count'];
                 }
@@ -158,6 +172,8 @@ class TransactionController extends ApiController {
             }
             
             if(!empty($put_vars['invalid_record_count'])){
+                
+                //validate
                 if(is_numeric($put_vars['invalid_record_count'])){
                     $data['invalid_record_count'] = $put_vars['invalid_record_count'];
                 }
@@ -166,6 +182,7 @@ class TransactionController extends ApiController {
                 }
             }
             
+            //prepare response
             if(count($error_array) > 0){
                 $response['type'] = 'Error';
                 $response['timestamp'] = date("Y-m-d H:i");
@@ -175,6 +192,7 @@ class TransactionController extends ApiController {
                 $response = TransactionModel::update($data);
             }
             
+            //send response
             $this->_sendResponse(200, CJSON::encode($response), 'text/json');
         }
     }
