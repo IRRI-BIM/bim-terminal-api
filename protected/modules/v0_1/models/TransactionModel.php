@@ -353,7 +353,7 @@ EOD;
                 }
                 
                 if($flag == 1){
-                    $transaction->modifier = $user;
+                    $transaction->modifier = strtoupper(trim($user));;
 
                     $transaction->modification_timestamp = new CDbExpression('NOW()');
 
