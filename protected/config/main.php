@@ -51,7 +51,7 @@ return array(
 		),
 	
 		'db'=>array(
-			'connectionString' => 'pgsql:host=localhost;dbname=bim-terminal-api',
+			'connectionString' => 'pgsql:host=54.85.214.6;dbname=bim-terminal-api',
 			'emulatePrepare' => true,
 			'username' => 'postgres',
 			'password' => 'br33d1ngR1c3',

@@ -39,7 +39,7 @@ class TransactionModel {
         extract($data);
 
         //Columns for selection in Sorting
-        $tableColumns = Yii::app()->db->schema->getTable('api.api_transaction')->getColumnNames();
+        //$tableColumns = Yii::app()->db->schema->getTable('api.api_transaction')->getColumnNames();
 
         /*
          * Filtering of data 
