@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Description of TransactionModel
  *
  * @author Jack Elendil B. Lagare <j.lagare@irri.org>
  */
 class TransactionModel {
-    
+
     /**
      * Appends SQL condition to an array of SQL conditions.
      * 
@@ -19,7 +20,7 @@ class TransactionModel {
 
         return $conditionArray;
     }
-    
+
     /**
      * Handles the retrieval of data from the database and provide a response
      * to the GET request.
@@ -36,6 +37,9 @@ class TransactionModel {
         $sortCondition = '';
 
         extract($data);
+
+        //Columns for selection in Sorting
+        $tableColumns = Yii::app()->db->schema->getTable('api.api_transaction')->getColumnNames();
 
         /*
          * Filtering of data 
@@ -90,6 +94,7 @@ class TransactionModel {
             $sortCondition = "ORDER BY " . $sortStr;
         }
 
+
         if (isset($fields)) {
 
             $selectStr = '';
@@ -118,6 +123,7 @@ class TransactionModel {
         } else {
             $selectStr = 's.*';
         }
+
 
         $sql = <<<EOD
             SELECT
@@ -170,7 +176,7 @@ EOD;
 
         return $response;
     }
-    
+
     /**
      * Handles the creation of a new object and provide a response to the
      * POST request.
@@ -183,57 +189,54 @@ EOD;
 
         extract($data);
         $response = array();
-        
+
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
-        $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
-        $criteria->compare('status','OPEN');
-        
+        $criteria->compare('UPPER(study_name)', strtoupper(trim($studyName)));
+        $criteria->compare('status', 'OPEN');
+
         $transaction = Transaction::model()->findAll($criteria);
-        
-        if(count($transaction) > 0){
-            
+
+        if (count($transaction) > 0) {
+
             $response['type'] = 'Warning';
             $response['timestamp'] = date("Y-m-d H:i");
-            $response['response'] = 'An open transaction for '.$studyName.' already exists. Send a PUT request instead to update the resource.';
-        }
-        else{
+            $response['response'] = 'An open transaction for ' . $studyName . ' already exists. Send a PUT request instead to update the resource.';
+        } else {
             $databaseTransaction = Yii::app()->db->beginTransaction();
-            try{
+            try {
                 $transaction = new Transaction();
-            
+
                 $transaction->status = 'OPEN';
                 $transaction->start_action_timestamp = new CDbExpression('NOW()');
                 $transaction->creator = strtoupper(trim($user));
 
-                if(isset($remarks)){
+                if (isset($remarks)) {
                     $transaction->remarks = $remarks;
                 }
 
                 $transaction->study_name = $studyName;
                 $transaction->save();
                 $databaseTransaction->commit();
-                
-                
+
+
                 $response['type'] = 'Success';
                 $response['timestamp'] = date("Y-m-d H:i");
-                $response['response'] = 'Transaction for '.$studyName.' was successfully created.';
-            } 
-            catch (Exception $ex) {
-                
+                $response['response'] = 'Transaction for ' . $studyName . ' was successfully created.';
+            } catch (Exception $ex) {
+
                 $response['type'] = 'Error';
                 $response['timestamp'] = date("Y-m-d H:i");
                 $response['response'] = 'There was an error creating the transaction.';
                 $response['error_details'] = $ex->getMessage();
-                
+
                 $databaseTransaction->rollback();
             }
-         
         }
-        
+
         return $response;
     }
-    
+
     /**
      * Handles the deletion of an object and provide a response to the
      * DELETE request.
@@ -241,58 +244,55 @@ EOD;
      * @param type $data array containing the parameters of the request
      * @return type String array containing the formatted response.
      * @author Jack Elendil B. Lagare <j.lagare@irri.org>
-    */
-    public static function delete($data = NULL){
-        
+     */
+    public static function delete($data = NULL) {
+
         extract($data);
         $response = array();
-        
+
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
-        $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
-        $criteria->compare('status','OPEN');
-        
+        $criteria->compare('UPPER(study_name)', strtoupper(trim($studyName)));
+        $criteria->compare('status', 'OPEN');
+
         $transaction = Transaction::model()->findAll($criteria);
-        
-        if(count($transaction) <= 0){
-            
+
+        if (count($transaction) <= 0) {
+
             $response['type'] = 'Error';
             $response['timestamp'] = date("Y-m-d H:i");
-            $response['response'] = 'There is no open transaction for '.$studyName.'.';
-        }
-        
-        else{
+            $response['response'] = 'There is no open transaction for ' . $studyName . '.';
+        } else {
             $databaseTransaction = Yii::app()->db->beginTransaction();
-            
-            try{
+
+            try {
                 $criteria = new CDbCriteria();
-                $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
-                $criteria->compare('status','OPEN');
+                $criteria->compare('UPPER(study_name)', strtoupper(trim($studyName)));
+                $criteria->compare('status', 'OPEN');
 
                 $transaction = Transaction::model()->find($criteria);
-                
+
                 $transaction->delete();
-                
+
                 $response['type'] = 'Success';
                 $response['timestamp'] = date("Y-m-d H:i");
-                $response['response'] = 'The open transaction for '.$studyName.' has been successfully deleted.';
-                
+                $response['response'] = 'The open transaction for ' . $studyName . ' has been successfully deleted.';
+
                 $databaseTransaction->commit();
-            } 
-            catch (Exception $ex) {
-                
+            } catch (Exception $ex) {
+
                 $response['type'] = 'Error';
                 $response['timestamp'] = date("Y-m-d H:i");
                 $response['response'] = 'There was an error deleting the transaction.';
                 $response['error_details'] = $ex->getMessage();
-                
+
                 $databaseTransaction->rollback();
             }
         }
-        
+
         return $response;
     }
-    
+
     /**
      * Handles the updating of an object and provide a response to the
      * PUT request.
@@ -300,60 +300,59 @@ EOD;
      * @param type $data array containing the parameters of the request
      * @return type String array containing the formatted response.
      * @author Jack Elendil B. Lagare <j.lagare@irri.org>
-    */ 
-    public static function update($data = NULL){
-        
+     */
+    public static function update($data = NULL) {
+
         extract($data);
-        
+
         $response = array();
         $flag = 0;
-        
+
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
-        $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
-        $criteria->compare('status','OPEN');
-        
+        $criteria->compare('UPPER(study_name)', strtoupper(trim($studyName)));
+        $criteria->compare('status', 'OPEN');
+
         $transaction = Transaction::model()->findAll($criteria);
-        
-        if(count($transaction) <= 0){
-            
+
+        if (count($transaction) <= 0) {
+
             $response['type'] = 'Error';
             $response['timestamp'] = date("Y-m-d H:i");
-            $response['response'] = 'There is no open transaction for '.$studyName.'.';
-        }
-        
-        else{
+            $response['response'] = 'There is no open transaction for ' . $studyName . '.';
+        } else {
             $databaseTransaction = Yii::app()->db->beginTransaction();
-            
-            try{
+
+            try {
                 $criteria = new CDbCriteria();
-                $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
-                $criteria->compare('status','OPEN');
+                $criteria->compare('UPPER(study_name)', strtoupper(trim($studyName)));
+                $criteria->compare('status', 'OPEN');
 
                 $transaction = Transaction::model()->find($criteria);
-                
-                if(!empty($status)){
+
+                if (!empty($status)) {
                     $transaction->status = $status;
                     $flag = 1;
                 }
-                
-                if(!empty($remarks)){
+
+                if (!empty($remarks)) {
                     $transaction->remarks = $remarks;
                     $flag = 1;
                 }
-                
-                if(!empty($recordCount)){
+
+                if (!empty($recordCount)) {
                     $transaction->record_count = $recordCount;
                     $flag = 1;
                 }
-                
-                if(!empty($invalidRecordCount)){
-                    $transaction->invalid_record_count = $invalidRecordCount  ;
+
+                if (!empty($invalidRecordCount)) {
+                    $transaction->invalid_record_count = $invalidRecordCount;
                     $flag = 1;
                 }
-                
-                if($flag == 1){
-                    $transaction->modifier = strtoupper(trim($user));;
+
+                if ($flag == 1) {
+                    $transaction->modifier = strtoupper(trim($user));
+                    ;
 
                     $transaction->modification_timestamp = new CDbExpression('NOW()');
 
@@ -361,27 +360,26 @@ EOD;
 
                     $response['type'] = 'Success';
                     $response['timestamp'] = date("Y-m-d H:i");
-                    $response['response'] = 'The open transaction for '.$studyName.' has been successfully updated.';
+                    $response['response'] = 'The open transaction for ' . $studyName . ' has been successfully updated.';
 
                     $databaseTransaction->commit();
-                }
-                else{
+                } else {
                     $response['type'] = 'Warning';
                     $response['timestamp'] = date("Y-m-d H:i");
-                    $response['response'] = 'The request did not contain any attributes to update. The open transaction for '.$study_name.' was not updated.';
+                    $response['response'] = 'The request did not contain any attributes to update. The open transaction for ' . $study_name . ' was not updated.';
                 }
-            } 
-            catch (Exception $ex) {
-                
+            } catch (Exception $ex) {
+
                 $response['type'] = 'Error';
                 $response['timestamp'] = date("Y-m-d H:i");
                 $response['response'] = 'There was an error updating the transaction.';
                 $response['error_details'] = $ex->getMessage();
-                
+
                 $databaseTransaction->rollback();
             }
         }
-        
+
         return $response;
     }
+
 }

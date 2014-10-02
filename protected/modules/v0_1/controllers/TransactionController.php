@@ -34,10 +34,12 @@ class TransactionController extends ApiController {
             if (!empty($_GET['sort'])) {
                 $data['sort'] = trim($_GET['sort']);
             }
-
+            
+            /*
             if(!empty($_GET['fields'])){
                 $data['fields'] = trim($_GET['fields']);
             }
+            */
             
             //retrieve data from model class
             $result = TransactionModel::get($data);
