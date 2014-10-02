@@ -53,11 +53,11 @@ class TransactionController extends ApiController {
                 array_push($error_array, "Required field (user) is missing.");
             }
 
-            if (!empty($post_vars['study_name'])) {
-                $data['study_name'] = $post_vars['study_name'];
+            if (!empty($post_vars['studyName'])) {
+                $data['studyName'] = $post_vars['studyName'];
             }
             else{
-                array_push($error_array, "Required field (study_name) is missing.");
+                array_push($error_array, "Required field (studyName) is missing.");
             }
             
             // Check optional parameters
@@ -97,11 +97,11 @@ class TransactionController extends ApiController {
                 array_push($error_array, "Required field (user) is missing.");
             }
 
-            if (!empty($delete_vars['study_name'])) {
-                $data['study_name'] = $delete_vars['study_name'];
+            if (!empty($delete_vars['studyName'])) {
+                $data['studyName'] = $delete_vars['studyName'];
             }
             else{
-                array_push($error_array, "Required field (study_name) is missing.");
+                array_push($error_array, "Required field (studyName) is missing.");
             }
             
             //prepare response
@@ -137,11 +137,11 @@ class TransactionController extends ApiController {
                 array_push($error_array, "Required field (user) is missing.");
             }
 
-            if (!empty($put_vars['study_name'])) {
-                $data['study_name'] = $put_vars['study_name'];
+            if (!empty($put_vars['studyName'])) {
+                $data['studyName'] = $put_vars['studyName'];
             }
             else{
-                array_push($error_array, "Required field (study_name) is missing.");
+                array_push($error_array, "Required field (studyName) is missing.");
             }
             
             // Check optional parameters
@@ -160,25 +160,25 @@ class TransactionController extends ApiController {
                 $data['remarks'] = $put_vars['remarks'];
             }
             
-            if(!empty($put_vars['record_count'])){
+            if(!empty($put_vars['recordCount'])){
                 
                 //validate
-                if(is_numeric($put_vars['record_count'])){
-                    $data['record_count'] = $put_vars['record_count'];
+                if(is_numeric($put_vars['recordCount'])){
+                    $data['recordCount'] = $put_vars['recordCount'];
                 }
                 else{
-                    array_push($error_array,"The value for (record_count) must be an integer.");
+                    array_push($error_array,"The value for (recordCount) must be an integer.");
                 }
             }
             
-            if(!empty($put_vars['invalid_record_count'])){
+            if(!empty($put_vars['invalidRecordCount'])){
                 
                 //validate
-                if(is_numeric($put_vars['invalid_record_count'])){
-                    $data['invalid_record_count'] = $put_vars['invalid_record_count'];
+                if(is_numeric($put_vars['invalidRecordCount'])){
+                    $data['invalidRecordCount'] = $put_vars['invalidRecordCount'];
                 }
                 else{
-                    array_push($error_array,"The value for (invalid_record_count) must be an integer.");
+                    array_push($error_array,"The value for (invalidRecordCount) must be an integer.");
                 }
             }
             

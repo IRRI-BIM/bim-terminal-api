@@ -186,7 +186,7 @@ EOD;
         
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
-        $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+        $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
         $criteria->compare('status','OPEN');
         
         $transaction = Transaction::model()->findAll($criteria);
@@ -195,7 +195,7 @@ EOD;
             
             $response['type'] = 'Warning';
             $response['timestamp'] = date("Y-m-d H:i");
-            $response['response'] = 'An open transaction for '.$study_name.' already exists. Send a PUT request instead to update the resource.';
+            $response['response'] = 'An open transaction for '.$studyName.' already exists. Send a PUT request instead to update the resource.';
         }
         else{
             $databaseTransaction = Yii::app()->db->beginTransaction();
@@ -210,14 +210,14 @@ EOD;
                     $transaction->remarks = $remarks;
                 }
 
-                $transaction->study_name = $study_name;
+                $transaction->study_name = $studyName;
                 $transaction->save();
                 $databaseTransaction->commit();
                 
                 
                 $response['type'] = 'Success';
                 $response['timestamp'] = date("Y-m-d H:i");
-                $response['response'] = 'Transaction for '.$study_name.' was successfully created.';
+                $response['response'] = 'Transaction for '.$studyName.' was successfully created.';
             } 
             catch (Exception $ex) {
                 
@@ -249,7 +249,7 @@ EOD;
         
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
-        $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+        $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
         $criteria->compare('status','OPEN');
         
         $transaction = Transaction::model()->findAll($criteria);
@@ -258,7 +258,7 @@ EOD;
             
             $response['type'] = 'Error';
             $response['timestamp'] = date("Y-m-d H:i");
-            $response['response'] = 'There is no open transaction for '.$study_name.'.';
+            $response['response'] = 'There is no open transaction for '.$studyName.'.';
         }
         
         else{
@@ -266,7 +266,7 @@ EOD;
             
             try{
                 $criteria = new CDbCriteria();
-                $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+                $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
                 $criteria->compare('status','OPEN');
 
                 $transaction = Transaction::model()->find($criteria);
@@ -275,7 +275,7 @@ EOD;
                 
                 $response['type'] = 'Success';
                 $response['timestamp'] = date("Y-m-d H:i");
-                $response['response'] = 'The open transaction for '.$study_name.' has been successfully deleted.';
+                $response['response'] = 'The open transaction for '.$studyName.' has been successfully deleted.';
                 
                 $databaseTransaction->commit();
             } 
@@ -310,7 +310,7 @@ EOD;
         
         //Check if there is an open transaction for the study
         $criteria = new CDbCriteria();
-        $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+        $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
         $criteria->compare('status','OPEN');
         
         $transaction = Transaction::model()->findAll($criteria);
@@ -319,7 +319,7 @@ EOD;
             
             $response['type'] = 'Error';
             $response['timestamp'] = date("Y-m-d H:i");
-            $response['response'] = 'There is no open transaction for '.$study_name.'.';
+            $response['response'] = 'There is no open transaction for '.$studyName.'.';
         }
         
         else{
@@ -327,7 +327,7 @@ EOD;
             
             try{
                 $criteria = new CDbCriteria();
-                $criteria->compare('UPPER(study_name)',strtoupper(trim($study_name)));
+                $criteria->compare('UPPER(study_name)',strtoupper(trim($studyName)));
                 $criteria->compare('status','OPEN');
 
                 $transaction = Transaction::model()->find($criteria);
@@ -342,13 +342,13 @@ EOD;
                     $flag = 1;
                 }
                 
-                if(!empty($record_count)){
-                    $transaction->record_count = $record_count;
+                if(!empty($recordCount)){
+                    $transaction->record_count = $recordCount;
                     $flag = 1;
                 }
                 
-                if(!empty($invalid_record_count)){
-                    $transaction->invalid_record_count = $invalid_record_count  ;
+                if(!empty($invalidRecordCount)){
+                    $transaction->invalid_record_count = $invalidRecordCount  ;
                     $flag = 1;
                 }
                 
@@ -361,7 +361,7 @@ EOD;
 
                     $response['type'] = 'Success';
                     $response['timestamp'] = date("Y-m-d H:i");
-                    $response['response'] = 'The open transaction for '.$study_name.' has been successfully updated.';
+                    $response['response'] = 'The open transaction for '.$studyName.' has been successfully updated.';
 
                     $databaseTransaction->commit();
                 }
